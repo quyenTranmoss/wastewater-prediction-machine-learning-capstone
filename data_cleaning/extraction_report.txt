@@ -1,0 +1,31 @@
+Rows extracted per year
+  2017:  661 cities   (Residential and Commercial Wastewater Costs Details (PDF).pdf)
+  2018:  615 cities   (2018 Residential and Commercial Wastewater Costs Details (PDF).pdf)
+  2019:  580 cities   (2019 wastewater fees details.pdf)
+  2020:  547 cities   (wastewater survey detailed.pdf)
+  2021:  569 cities   (2021 Wastewater Detailed Report.pdf)
+  2022:  125 cities   (2022wastewaterdetails.pdf)
+  2023:  473 cities   (2023wastewaterusedetails.pdf)
+  2024:  239 cities   (wastewater details_2024.pdf)
+  2025:  158 cities   (2025_wasteuse_detailed.pdf)
+
+Total rows: 3955
+Distinct cities: 885
+Cities present in ALL 9 years: 9
+  Booker, Como, Cooper, Crowell, Groom, Lindsay, New Summerfield, Port Neches, Sundown
+
+Cities listed twice in one year with DIFFERENT values (kept first, review these): 3
+  2020 Tatum
+    kept:    {'year': 2020, 'population_group': '2,000 OR LESS', 'city': 'Tatum', 'population': 1385, 'total_customers': 525, 'res_fee_5k_gal': 17.35, 'res_fee_10k_gal': 27.35, 'com_fee_50k_gal': 81.35, 'com_fee_200k_gal': 407.35}
+    dropped: {'year': 2020, 'population_group': '2,000 OR LESS', 'city': 'Tatum', 'population': 1360, 'total_customers': 525, 'res_fee_5k_gal': 17.35, 'res_fee_10k_gal': 27.35, 'com_fee_50k_gal': 81.35, 'com_fee_200k_gal': 407.35}
+  2024 Martindale
+    kept:    {'year': 2024, 'population_group': '2,000 OR LESS', 'city': 'Martindale', 'population': 1192, 'total_customers': 203, 'res_fee_5k_gal': 39.5, 'com_fee_50k_gal': 213.0}
+    dropped: {'year': 2024, 'population_group': '2,000 OR LESS', 'city': 'Martindale', 'population': 1192, 'total_customers': 180, 'res_fee_5k_gal': 40.5, 'com_fee_50k_gal': 261.0}
+  2025 Kermit
+    kept:    {'year': 2025, 'population_group': '5,001 - 10,000', 'city': 'Kermit', 'population': 6856, 'total_customers': 2757, 'res_fee_5k_gal': 17.42, 'com_fee_50k_gal': 43.06}
+    dropped: {'year': 2025, 'population_group': '5,001 - 10,000', 'city': 'Kermit', 'population': 6856, 'total_customers': 451, 'res_fee_5k_gal': 22.94, 'com_fee_50k_gal': 227.44}
+
+Rows with a $0.00 residential-5k or commercial-50k fee: 282
+
+Unparsed lines: 1
+  2017 Houston: total_customers corrected 44841 -> 448410
