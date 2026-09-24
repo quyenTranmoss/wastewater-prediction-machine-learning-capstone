@@ -22,7 +22,7 @@ import re
 import pdfplumber
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-PDF_DIR = os.path.join(HERE, "..", "OneDrive_1_9-5-2026")
+PDF_DIR = os.path.join(HERE, "..", "source_pdfs")
 OUT_CSV = os.path.join(HERE, "wastewater_costs_2017_2025.csv")
 OUT_REPORT = os.path.join(HERE, "extraction_report.txt")
 

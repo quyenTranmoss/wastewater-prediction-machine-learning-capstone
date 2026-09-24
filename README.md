@@ -12,7 +12,7 @@ Adriana Patino (database & integration) · Emily Gilkes (UI/UX)
 ```
 data_cleaning/     PDF -> CSV extraction and the cleaned dataset
 database/          SQLite schema, loaders, and the query layer the API calls
-OneDrive_1_9-5-2026/   source survey PDFs (not tracked in git)
+source_pdfs/       source survey PDFs (shared via OneDrive, not in the repo)
 ```
 
 ## Getting set up
@@ -78,8 +78,14 @@ model's rows rather than appending, so forecasts can be regenerated freely.
 
 ## Adding a new year of data
 
-Drop the new survey PDF into `OneDrive_1_9-5-2026/`, then re-run the two commands in
-*Getting set up*. No schema or UI changes — this satisfies the scalability requirement.
+The survey PDFs are not tracked in git (they are large and never change). Get them
+from the team OneDrive folder and put them in a `source_pdfs/` directory at the
+project root — you only need this if you want to regenerate the CSV. Building the
+database from the committed CSV does not require them.
+
+To add a new year: drop the new survey PDF into `source_pdfs/`, then re-run the two
+commands in *Getting set up*. No schema or UI changes are needed — this is what
+satisfies the scalability requirement.
 
 Known data-quality issues and the decisions made about them are documented in
 [data_cleaning/README.md](data_cleaning/README.md).

@@ -1,8 +1,8 @@
 # Generated from the CSV by database/load_sqlite.py - rebuild instead of committing
 database/*.db
 
-# Source survey PDFs are large and never change; keep them in OneDrive
-OneDrive_1_9-5-2026/
+# Source survey PDFs - shared through the team OneDrive folder, not the repo
+source_pdfs/
 
 # Trained model files (Quyen) - track these with Git LFS if they need sharing
 *.pkl

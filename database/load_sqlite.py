@@ -11,7 +11,7 @@ Creates database/wastewater.db with:
     model_metadata    which ML model is deployed, its accuracy, when it was trained (Quyen)
 
 Re-running is safe: the data tables are rebuilt from the CSV; users/model_metadata are kept.
-Adding a new year later = drop the PDF in OneDrive_1_9-5-2026/, run
+Adding a new year later = drop the PDF in source_pdfs/, run
 data_cleaning/extract_pdfs.py, then run this script again. No UI change needed.
 """
 import csv

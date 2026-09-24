@@ -1,7 +1,7 @@
 # Data cleaning — Wastewater Cost Prediction (CSE 496)
 
 Source: Texas Municipal League "Residential and Commercial Wastewater Costs Details"
-survey PDFs, 2017–2025 (in `../OneDrive_1_9-5-2026/`).
+survey PDFs, 2017–2025 (in `../source_pdfs/`, shared via the team OneDrive).
 
 ## How to rebuild the dataset
 
