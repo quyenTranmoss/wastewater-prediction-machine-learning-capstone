@@ -18,7 +18,7 @@ source_pdfs/       source survey PDFs (shared via OneDrive, not in the repo)
 ## Getting set up
 
 ```bash
-pip install pdfplumber
+pip install -r requirements.txt
 python data_cleaning/extract_pdfs.py    # PDFs  -> wastewater_costs_2017_2025.csv
 python database/load_sqlite.py          # CSV   -> database/wastewater.db
 python database/queries.py              # smoke test: prints sample query results
@@ -26,6 +26,12 @@ python database/queries.py              # smoke test: prints sample query result
 
 `wastewater.db` is not committed — it is rebuilt from the CSV in one command, so
 everyone stays in sync from the same source data.
+
+Then create yourself a local login account:
+
+```bash
+python database/users.py add <username>
+```
 
 ## Database schema
 
@@ -35,7 +41,7 @@ everyone stays in sync from the same source data.
 | `wastewater_costs` | one row per city per year, 2017–2025 (3,955), `UNIQUE(city_id, year)` |
 | `predictions` | 15-year forecasts from the ML model, `UNIQUE(city_id, year, target, model_name)` |
 | `model_metadata` | which model is deployed and its accuracy scores |
-| `users` | login accounts — store password **hashes**, never plain text |
+| `users` | login accounts; Argon2 password hashes (see `database/users.py`) |
 
 The two prediction targets are `res_fee_5k_gal` (residential monthly bill at 5,000 gal)
 and `com_fee_50k_gal` (commercial at 50,000 gal). These are the only two fees reported

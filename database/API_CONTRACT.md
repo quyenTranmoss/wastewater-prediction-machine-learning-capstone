@@ -139,7 +139,46 @@ python database/load_sqlite.py    # build the database from the committed CSV
 python database/queries.py        # prints live output from every function
 ```
 
-## Still open
+---
 
-- **`users` table is empty.** Tell me which password hashing library you are using and
-  I will add a seed script so there is a real test account to log in against.
+# Authentication: `database/users.py`
+
+Argon2 via `argon2-cffi`, per Hannah. The plain password is never stored, logged, or
+written to a file — only the hash goes in the `users` table.
+
+```python
+from database.users import verify_user, create_user
+
+verify_user("alice", "hunter2")   # -> True / False
+create_user("alice", "hunter2")   # raises sqlite3.IntegrityError if taken
+```
+
+`verify_user` is what the login endpoint calls. Two behaviours worth knowing:
+
+- It returns `False` for an unknown username **and** a wrong password, and hashes a
+  throwaway value in the unknown-username case so both take the same time. A faster
+  "no such user" response would let someone probe which usernames exist.
+- If the Argon2 parameters ever change, it transparently re-hashes the stored password
+  on the next successful login.
+
+Stored hashes look like `$argon2id$v=19$m=65536,t=3,p=4$...` — argon2id with the
+RFC 9106 default parameters. The salt is inside the hash string, so there is no
+separate salt column.
+
+### Making a test account
+
+Each of us creates our own locally — nothing shared, nothing committed:
+
+```bash
+python database/users.py add <username>   # prompts for a password, twice
+python database/users.py list             # usernames only
+```
+
+The database file is gitignored, so these accounts stay on your own machine.
+
+### What this does *not* cover
+
+Session tokens are yours, not the database's. `verify_user` answers "are these
+credentials correct" and nothing else — issuing and checking JWTs, expiry, and
+logout all live in the backend. If tokens ever need to survive a server restart,
+tell me and I will add a `sessions` table.
