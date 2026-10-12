@@ -6,6 +6,7 @@ argon2-cffi>=23.1       #Argon2 password hashing
 fastapi>=0.115          #backend API framework
 uvicorn[standard]>=0.32 #local ASGI server for FastAPI
 PyJWT>=2.9              #JWT creation and verification
+python-dotenv>=1.0      #reads JWT_SECRET_KEY from .env (imported by auth.py)
 
 # Machine learning (Quyen) - uncomment as needed
 # scikit-learn>=1.5
