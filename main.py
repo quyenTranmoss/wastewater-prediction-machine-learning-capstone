@@ -5,6 +5,7 @@ from auth import router as auth_router, get_current_user
 from database.queries import (
     search_cities, available_years, costs_by_year,
     city_history, city_forecast, compare_cities,
+    population_groups, list_cities, model_performance,
 )
 
 app = FastAPI()
@@ -69,3 +70,18 @@ def api_forecast(city: str, target: str = "res_fee_5k_gal", user: str = Depends(
 def api_compare(cities: str, target: str = "res_fee_5k_gal", user: str = Depends(get_current_user)):
     check_target(target)
     return compare_cities([c.strip() for c in cities.split(",")], target)
+
+
+@app.get("/api/groups")
+def api_groups(user: str = Depends(get_current_user)):
+    return population_groups()
+
+
+@app.get("/api/city-list")
+def api_city_list(group: str = "", user: str = Depends(get_current_user)):
+    return list_cities(group or None)
+
+
+@app.get("/api/models")
+def api_models(user: str = Depends(get_current_user)):
+    return model_performance()

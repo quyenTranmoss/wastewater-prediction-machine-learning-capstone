@@ -449,8 +449,9 @@ function About() {
     return (
         <div className="content-box">
             <h2 className="card-title">About</h2>
-            <p>Machine learning system that analyzes Texas municipal wastewater costs (2017–2025) and predicts residential and commercial sewer fees for the next 15 years.</p>
-            <p>CSE 496 capstone — Brown &amp; Caldwell / University of Louisville.</p>
+            <p>Machine learning web application that analyzes Texas wastewater costs (2017–2025) and predicts residential and commercial sewer fees for the next 15 years.</p>
+            <p>CSE 496 Capstone Project </p>
+            <p>In collaboration with Brown &amp; Caldwell / University of Louisville.</p>
         </div>
     );
 }

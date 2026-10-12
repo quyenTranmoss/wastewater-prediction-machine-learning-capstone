@@ -81,6 +81,36 @@ def available_years():
             "SELECT DISTINCT year FROM wastewater_costs ORDER BY year")]
 
 
+
+
+
+def population_groups():
+    with connect() as c:
+        return [r[0] for r in c.execute(
+            "SELECT DISTINCT population_group FROM wastewater_costs "
+            "WHERE population_group IS NOT NULL ORDER BY population_group")]
+
+
+def list_cities(group: str | None = None):
+    """All city names (optionally only those listed under one population group)."""
+    sql = ("SELECT DISTINCT ci.name FROM cities ci "
+           "JOIN wastewater_costs w ON w.city_id = ci.id")
+    args = []
+    if group:
+        sql += " WHERE w.population_group = ?"
+        args.append(group)
+    with connect() as c:
+        return [r[0] for r in c.execute(sql + " ORDER BY ci.name", args)]
+
+
+def model_performance():
+    with connect() as c:
+        return [dict(r) for r in c.execute(
+            "SELECT model_name, target, r2, rmse, mae, is_deployed, trained_at "
+            "FROM model_metadata ORDER BY target, is_deployed DESC")]
+
+    
+
 if __name__ == "__main__":
     print("years:", available_years())
     print("search 'Mc':", search_cities("Mc"))
