@@ -1,136 +1,179 @@
-* {
-    box-sizing: border-box;
-}
-
+* { box-sizing: border-box; }
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
+    background: #f1f5fb;
+    color: #1c2b3a;
 }
 
-
-/* Login */
-
+/* ================= LOGIN ================= */
 .login-page {
     min-height: 100vh;
     display: flex;
-    justify-content: center;
     align-items: center;
+    padding-left: 5vw;
+    background-color: #16365c;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
-
 .login-box {
-    width: 350px;
-    padding: 30px;
-    background-color: white;
-    border: 1px solid #ccc;
+    width: 400px;
+    padding: 34px 32px 22px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
 }
+.login-logo { display: flex; align-items: center; gap: 12px; }
+.brand-top { font-size: 34px; font-weight: 800; color: #0b2a5b; letter-spacing: 1px; line-height: 1; }
+.brand-sub { font-size: 14px; font-weight: 700; color: #0b2a5b; line-height: 1.25; margin-top: 4px; }
+.tagline { margin: 10px 0 18px; font-size: 12px; color: #667; }
+.login-box label.field { display: block; margin: 14px 0 6px; font-size: 13px; font-weight: 600; color: #223; }
+.login-box input[type="text"],
+.login-box input[type="password"] {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #ccd3e0;
+    border-radius: 4px;
+    font-size: 14px;
+    background: white;
+}
+.pw-wrap { position: relative; }
+.pw-wrap button {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; cursor: pointer; color: #556; display: flex;
+}
+.login-options { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; font-size: 12px; }
+.login-options label { display: flex; gap: 6px; align-items: center; margin: 0; }
+.login-options a { color: #1769d1; text-decoration: none; }
+.login-btn {
+    width: 100%; margin-top: 18px; padding: 12px;
+    background: #0b57b7; color: white; border: none; border-radius: 4px;
+    font-weight: 700; letter-spacing: 1px; cursor: pointer; font-size: 14px;
+}
+.login-btn:hover { background: #0a4a9c; }
+.login-foot {
+    text-align: center; font-size: 12px; color: #556;
+    margin-top: 22px; padding-top: 12px; border-top: 1px solid #e3e8ef;
+}
+.login-error { color: crimson; font-size: 13px; margin: 10px 0 0; }
 
-    .login-box h1 {
-        margin: 0;
-    }
-
-    .login-box h2 {
-        margin-bottom: 25px;
-        font-size: 18px;
-    }
-
-    .login-box label {
-        display: block;
-        margin-top: 15px;
-        margin-bottom: 5px;
-    }
-
-    .login-box input {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-    }
-
-    .login-box button {
-        width: 100%;
-        margin-top: 20px;
-        padding: 10px;
-        border: 1px solid #999;
-        background-color: #eee;
-        cursor: pointer;
-    }
-
-
-/* Dashboard */
-
+/* ================= SHELL ================= */
 .top-bar {
-    height: 70px;
-    background-color: white;
-    border-bottom: 1px solid #ccc;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 30px;
+    position: fixed; top: 0; left: 0; right: 0; height: 56px; z-index: 10;
+    background: #0a2558; color: white;
+    display: flex; justify-content: space-between; align-items: center; padding: 0 22px;
 }
-
-    .top-bar h2 {
-        margin: 0;
-        font-size: 20px;
-    }
-
-.logout-button {
-    padding: 8px 15px;
-    background-color: white;
-    border: 1px solid #999;
-    cursor: pointer;
+.top-title { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 700; }
+.top-right { display: flex; align-items: center; gap: 22px; font-size: 13px; }
+.bell { position: relative; display: flex; }
+.bell::after {
+    content: ""; position: absolute; top: -2px; right: -2px;
+    width: 8px; height: 8px; background: #e53935; border-radius: 50%;
 }
-
-
-/* Sidebar */
+.admin { display: flex; align-items: center; gap: 8px; }
 
 .sidebar {
-    position: fixed;
-    top: 70px;
-    left: 0;
-    bottom: 0;
-    width: 220px;
-    background-color: white;
-    border-right: 1px solid #ccc;
-    padding-top: 20px;
+    position: fixed; top: 56px; left: 0; bottom: 0; width: 210px;
+    background: #0a2558; padding: 14px 10px; display: flex; flex-direction: column;
 }
-
-    .sidebar h3 {
-        padding-left: 20px;
-    }
-
-    .sidebar button {
-        display: block;
-        width: 100%;
-        padding: 15px 20px;
-        background-color: white;
-        border: none;
-        text-align: left;
-        cursor: pointer;
-    }
-
-        .sidebar button:hover {
-            background-color: #eee;
-        }
-
-
-/* Main area */
-
-.dashboard-content {
-    margin-left: 220px;
-    padding: 30px;
+.sidebar button {
+    display: flex; align-items: center; gap: 12px;
+    width: 100%; padding: 12px 14px; margin-bottom: 4px;
+    background: none; border: none; color: #d4def0;
+    font-size: 14px; text-align: left; cursor: pointer; border-radius: 6px;
 }
+.sidebar button:hover { background: #12388a; }
+.sidebar button.active { background: #1e6fe0; color: white; font-weight: 600; }
+.sidebar .spacer { flex: 1; }
+.sidebar .logout { border-top: 1px solid #1c3b73; border-radius: 0; padding-top: 16px; margin-top: 8px; }
 
-    .dashboard-content h1 {
-        margin-top: 0;
-    }
+.dashboard-content { margin-left: 210px; padding: 78px 26px 28px; }
+.dashboard-content h1 { margin: 0 0 16px; font-size: 23px; font-weight: 700; color: #111d2e; }
 
+/* ================= CARDS / FILTERS ================= */
 .content-box {
-    margin-top: 25px;
-    background-color: white;
-    padding: 25px;
-    border: 1px solid #ccc;
+    background: white; border: 1px solid #dde3ec; border-radius: 8px;
+    padding: 20px; margin-bottom: 16px;
 }
+.card-title { margin: 0 0 14px; font-size: 17px; font-weight: 700; color: #111d2e; }
+.chart-title { margin: 0 0 8px; font-size: 14px; font-weight: 700; color: #111d2e; }
 
-    .content-box h2 {
-        margin-top: 0;
-    }
+.filters { display: flex; gap: 18px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 16px; }
+.filters label { display: flex; flex-direction: column; gap: 5px; font-size: 12px; font-weight: 600; color: #445; }
+.filters select, .filters input, .adder {
+    padding: 9px 10px; min-width: 190px;
+    border: 1px solid #ccd3e0; border-radius: 4px; background: white; font-size: 13px;
+}
+.search-wrap { position: relative; }
+.search-wrap input { padding-right: 32px; }
+.search-wrap svg { position: absolute; right: 9px; top: 9px; color: #556; }
+
+.btn {
+    padding: 10px 20px; border: none; border-radius: 4px; color: white;
+    font-weight: 700; font-size: 13px; cursor: pointer; background: #0b57b7;
+}
+.btn.green { background: #2e9e4f; }
+
+/* ================= DASHBOARD ================= */
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px; }
+.kpi {
+    background: white; border: 1px solid #dde3ec; border-radius: 8px;
+    padding: 16px; display: flex; gap: 14px; align-items: center;
+}
+.icon-tile { width: 54px; height: 54px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+.tile-green  { background: #e3f4e8; color: #2e9e4f; }
+.tile-blue   { background: #e0edfb; color: #1769d1; }
+.tile-purple { background: #efe6fa; color: #8e44ad; }
+.tile-orange { background: #fdebd9; color: #ef8a1c; }
+.kpi .label { font-size: 12px; font-weight: 600; color: #445; }
+.kpi .value { font-size: 25px; font-weight: 800; color: #0b2a5b; line-height: 1.15; }
+.kpi .sub { font-size: 11px; color: #889; }
+.chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* ================= PREDICTION / COMPARISON ================= */
+.pred-grid { display: grid; grid-template-columns: 1fr 250px; gap: 18px; align-items: start; }
+.summary-card { border: 1px solid #dde3ec; border-radius: 8px; padding: 14px 16px; }
+.summary-card h3 { margin: 0 0 8px; font-size: 14px; font-weight: 700; color: #0b2a5b; }
+.summary-row {
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    padding: 10px 0; border-bottom: 1px solid #eef1f6; font-size: 12.5px; color: #445;
+}
+.summary-row:last-child { border-bottom: none; }
+.summary-row b { font-size: 14px; color: #111d2e; text-align: right; }
+.summary-row b.good { color: #2e9e4f; font-size: 16px; }
+.model-strip {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px;
+    border: 1px solid #dde3ec; border-radius: 6px; padding: 10px 14px;
+    font-size: 12px; color: #667;
+}
+.model-strip b { display: block; margin-top: 3px; font-size: 14px; color: #111d2e; }
+
+.notice {
+    background: #fff6dd; border: 1px solid #f0d78a; border-radius: 4px;
+    padding: 10px 12px; margin-bottom: 12px; font-size: 13px;
+}
+.chip-box {
+    display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+    min-width: 430px; min-height: 38px; padding: 4px 8px;
+    border: 1px solid #ccd3e0; border-radius: 4px; background: white;
+}
+.chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: #eaeff7; border-radius: 4px; padding: 4px 8px; font-size: 12px;
+}
+.chip button { background: none; border: none; cursor: pointer; padding: 0; display: flex; color: #556; }
+.chip-box .adder { border: none; min-width: 100px; padding: 4px; color: #1769d1; }
+
+/* ================= TABLES ================= */
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: #f1f5fb; text-align: left; font-weight: 700; color: #1c2b3a; }
+th, td { padding: 9px 10px; border: 1px solid #e3e8ef; }
+.pager { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; font-size: 12.5px; color: #556; }
+.pager-btns { display: flex; gap: 4px; }
+.pg {
+    min-width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+    border: 1px solid #ccd3e0; background: white; border-radius: 4px; cursor: pointer; font-size: 12px;
+}
+.pg.active { background: #0b57b7; border-color: #0b57b7; color: white; }
+.pg:disabled { opacity: 0.4; cursor: default; }
