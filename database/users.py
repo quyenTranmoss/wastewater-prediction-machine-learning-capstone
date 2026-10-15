@@ -65,6 +65,19 @@ def verify_user(username: str, password: str) -> bool:
                          (ph.hash(password), row["id"]))
         return True
 
+#change password function, 
+# takes in a username and new password, 
+# hashes the new password and updates the database with the new hash. Raises ValueError if the user does not exist.
+def change_password(userame: str, new_password: str) -> None:
+    """Change the password for an existing account."""
+    with _connect() as conn:
+        result = conn.execute(
+            "UPDATE users SET password_hash = ? WHERE username = ?",
+            (ph.hash(new_password), username)
+        )
+
+        if result.rowcount == 0:
+            raise ValueError(f"User {username!r} does not exist.")
 
 def list_users() -> list[str]:
     with _connect() as conn:
@@ -87,5 +100,15 @@ if __name__ == "__main__":
     elif cmd == "list":
         users = list_users()
         print("\n".join(users) if users else "No accounts yet.")
+    elif cmd == "change" and len(sys.argv) == 3:
+        username = sys.argv[2]
+        new_password = getpass.getpass(f"New password for {username}: ")
+        if new_password != getpass.getpass("Confirm: "):
+            sys.exit("Passwords did not match - nothing was changed.")
+        try:
+            change_password(username, new_password)
+        except ValueError as e:
+            sys.exit(str(e))
+        print(f"Password changed for {username!r}.")
     else:
         sys.exit(__doc__)
