@@ -1,39 +1,70 @@
-﻿import { useState, useEffect } from "react";
+﻿/*
+This handles the 
+1.login screen
+2.navigation
+3.historical wastewater cost data
+4.charts
+5.machine-learning predictions
+6.city comparisons.
+*/
+
+//useState lets components remember changing values.
+//useEffect lets components perform tasks such as retrieving data from an API.
+import { useState, useEffect } from "react";
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
     ResponsiveContainer, ReferenceArea,
 } from "recharts";
+
+//this library has open-sourced icons free to use
 import {
     Droplets, LayoutDashboard, Database, Home, Building2, TrendingUp, Cpu, Info,
     LogOut, Bell, Users, UserCheck, Search, Eye, EyeOff, ChevronDown,
     ChevronLeft, ChevronRight, UserCircle, X,
 } from "lucide-react";
+
+//apply index.css style to components
 import "./index.css";
 
+//establishing local host
 const API = "http://127.0.0.1:8000";
 const COLORS = ["#1769d1", "#43a047", "#f9a825", "#0b2a5b", "#e53935"];
+
+//This defines a helper function for displaying money.
+//If v is missing, display a dash. If money is present, convert it to a number and display it with two decimal places and a dollar sign.
 const money = (v) => (v == null ? "—" : `$${Number(v).toFixed(2)}`);
+
 const TARGETS = {
     res_fee_5k_gal: "Residential Fee (Per 5,000 Gal)",
     com_fee_50k_gal: "Commercial Fee (Per 50,000 Gal)",
 };
+
+//the three ML models sponsors want us to train
 const MODEL_NAMES = {
     linear_regression: "Linear Regression",
     random_forest: "Random Forest",
     xgboost: "XGBoost Regression",
 };
+
+//This creates an array of years from 2017 through 2040.
 const FULL_YEARS = Array.from({ length: 24 }, (_, i) => 2017 + i); // 2017..2040
 
+
 async function get(path, token) {
+    //fetch sends an http request
+    //${API}${path} combines the base URL with the endpoint
     const res = await fetch(`${API}${path}`, {
+        //makes sure that the user is logged in
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) throw new Error(res.status);
     return res.json();
 }
 
-/* ---------- helpers ---------- */
+/* ---------- these are helpers ---------- */
 
+//CitySelect creates a dropdown for selecting a city. 
+// It retrieves available cities from the backend and lets the parent component know which city the user selected.
 function CitySelect({ token, value, onChange, group = "" }) {
     const [cities, setCities] = useState([]);
     useEffect(() => {
@@ -49,9 +80,13 @@ function CitySelect({ token, value, onChange, group = "" }) {
         </select>
     );
 }
-
+//This component creates the Add city dropdown used in the city comparison page.
 function CityAdder({ token, onAdd }) {
     const [cities, setCities] = useState([]);
+
+    //useEffect(...): fetches the city list when the component first appears or the token changes.
+    //then(setCities): passes the response directly to setCities
+
     useEffect(() => { get("/api/city-list?group=", token).then(setCities); }, [token]);
     return (
         <select className="adder" value="" onChange={(e) => e.target.value && onAdd(e.target.value)}>
@@ -61,8 +96,11 @@ function CityAdder({ token, onAdd }) {
     );
 }
 
+
+//This helper prepares historical and predicted values so Recharts can display them on the same chart.
 function buildSeries(f) {
     const map = {};
+    //Loops through historical records. For each record h, it stores an object containing the year and actual value.
     f.history.forEach((h) => (map[h.year] = { year: h.year, actual: h.value }));
     f.predictions.forEach((p) => {
         map[p.year] = { ...(map[p.year] || { year: p.year }), predicted: p.value };
@@ -84,6 +122,9 @@ function Dashboard({ token }) {
     const [history, setHistory] = useState([]);
 
     useEffect(() => { get("/api/groups", token).then(setGroups); }, [token]);
+
+    //Run the effect whenever token changes or city changes.
+    //uses the earlier defined get request
     useEffect(() => {
         if (city) get(`/api/cities/${encodeURIComponent(city)}/history`, token).then(setHistory);
     }, [token, city]);
@@ -189,7 +230,7 @@ function HistoricalData({ token }) {
     const shown = filtered.slice(pageNo * PER, pageNo * PER + PER);
     const nums = [];
     for (let i = Math.max(0, pageNo - 2); i <= Math.min(pages - 1, pageNo + 2); i++) nums.push(i);
-
+//allows users to download historical data table as csv file
     function downloadCsv() {
         const head = "city,year,population_group,population,total_customers,res_fee_5k_gal,com_fee_50k_gal";
         const lines = filtered.map((r) =>
@@ -269,6 +310,7 @@ function Prediction({ token, target }) {
     const isRes = target === "res_fee_5k_gal";
     const color = isRes ? "#2e9e4f" : "#1769d1";
 
+    //once ML machine prediction is loaded into prediction table generate it here
     function generate() {
         get(`/api/cities/${encodeURIComponent(city)}/forecast?target=${target}`, token).then(setData);
     }
@@ -476,11 +518,15 @@ function App() {
     const [error, setError] = useState("");
     const [page, setPage] = useState("Dashboard");
 
+    //handles login
+    //fetch sends a POST request to the backend with the username and password. 
+    // If successful, it stores the access token in state and clears the password field.
+    //  If unsuccessful, it sets an error message.
     async function handleLogin() {
         setError("");
         try {
             const res = await fetch(`${API}/login`, {
-                method: "POST",
+                method: "POST", 
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password }),
             });
@@ -489,10 +535,11 @@ function App() {
             setToken(data.access_token);
             setPassword("");
         } catch {
-            setError("Cannot reach the server. Is uvicorn running?");
+            setError("Can't reach the server. Check if uvicorn running.");
         }
     }
-
+    //if token is not present, display the login page. 
+    // Otherwise, display the main application with navigation and content.
     if (!token) {
         return (
             <div className="login-page" style={{ backgroundImage: "url(/login_background.png)" }}>

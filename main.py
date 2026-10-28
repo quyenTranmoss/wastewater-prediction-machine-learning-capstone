@@ -1,7 +1,16 @@
+#
+# defining API endpoints using FastAPI.
+# These APIs call upon a lot of the functions as defined in database/queries.py to obtain data from the database.
+#
+
+
+
 from fastapi import FastAPI, Depends, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware #for cross-origin requests from the frontend to the backend
 
 from auth import router as auth_router, get_current_user
+#this imports adraian'a query functions from the database.queries 
+#these are the functions the API endpoints call to obtain data.
 from database.queries import (
     search_cities, available_years, costs_by_year,
     city_history, city_forecast, compare_cities,
@@ -12,11 +21,13 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
+    #specifies frontend origins the browser may use to make permitted cross-origin requests to your backend.
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+#This adds the endpoints defined in auth.py to the main FastAPI application.
 app.include_router(auth_router)
 
 TARGETS = {"res_fee_5k_gal", "com_fee_50k_gal"}
@@ -29,18 +40,20 @@ def check_target(target: str):
             detail=f"target must be one of {sorted(TARGETS)}",
         )
 
-
+#homepage endpoint, returns a message indicating that the backend is running.
 @app.get("/")
 def home():
     return {"message": "Wastewater Prediction Backend is running"}
 
-
+#health check endpoint 
 @app.get("/health")
 def health():
     return {"status": "healthy"}
 
 
 @app.get("/api/cities")
+#query parameter q is used to search for cities,
+# return cities only if the user is authenticated.
 def api_cities(q: str = "", user: str = Depends(get_current_user)):
     return search_cities(q)
 
@@ -54,7 +67,7 @@ def api_years(user: str = Depends(get_current_user)):
 def api_costs(year: int, group: str | None = None, user: str = Depends(get_current_user)):
     return costs_by_year(year, group)
 
-
+#path parameters are used to specify the city 
 @app.get("/api/cities/{city}/history")
 def api_history(city: str, user: str = Depends(get_current_user)):
     return city_history(city)
