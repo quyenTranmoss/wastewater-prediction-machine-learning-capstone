@@ -1,85 +1,200 @@
+"""Load forecasts and model evaluation metadata into the project SQLite DB.
+
+Run from the repository root:
+    python database/load_predictions.py ml/outputs/predictions.csv ml/outputs/model_metrics.csv
+
+The metadata file is important: database/queries.py only returns forecasts whose
+model_metadata row has is_deployed = 1.
 """
-Load Quyen's 15-year forecasts into the database.
+from __future__ import annotations
 
-Quyen's model script should write a CSV with exactly these columns:
-
-    city,year,target,predicted_value,lower_bound,upper_bound,model_name
-
-    city            city name exactly as it appears in wastewater_costs_2017_2025.csv
-    year            future year, e.g. 2026 ... 2040
-    target          'res_fee_5k_gal' or 'com_fee_50k_gal'
-    predicted_value predicted monthly bill in USD
-    lower_bound     optional - leave blank if the model doesn't produce intervals
-    upper_bound     optional
-    model_name      'linear_regression' | 'random_forest' | 'xgboost'
-
-Then run:
-    python database/load_predictions.py path/to/predictions.csv
-
-Re-running replaces that model's rows for those targets, so it is safe to
-regenerate forecasts as often as needed.
-"""
 import csv
+import math
+import os
 import sqlite3
 import sys
-import os
+from pathlib import Path
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "wastewater.db")
 VALID_TARGETS = {"res_fee_5k_gal", "com_fee_50k_gal"}
+PREDICTION_COLUMNS = {
+    "city", "year", "target", "predicted_value",
+    "lower_bound", "upper_bound", "model_name",
+}
+METADATA_COLUMNS = {"model_name", "target", "r2", "rmse", "mae", "is_deployed"}
 
 
-def optional_float(v):
-    return float(v) if v not in ("", None) else None
+def read_csv(path: str) -> list[dict]:
+    with open(path, newline="", encoding="utf-8-sig") as file:
+        return list(csv.DictReader(file))
 
 
-def main(csv_path):
+def optional_float(value: str | None) -> float | None:
+    if value in ("", None):
+        return None
+    number = float(value)
+    if not math.isfinite(number):
+        raise ValueError(f"Expected a finite number, got {value!r}")
+    return number
+
+
+def main(predictions_path: str, metrics_path: str) -> None:
+    predictions = read_csv(predictions_path)
+    metadata = read_csv(metrics_path)
+
+    if not predictions:
+        raise ValueError("The predictions CSV is empty.")
+    if not metadata:
+        raise ValueError("The model metrics CSV is empty.")
+
+    missing_prediction_columns = PREDICTION_COLUMNS - set(predictions[0])
+    missing_metadata_columns = METADATA_COLUMNS - set(metadata[0])
+    if missing_prediction_columns:
+        raise ValueError(f"Predictions CSV is missing columns: {sorted(missing_prediction_columns)}")
+    if missing_metadata_columns:
+        raise ValueError(f"Metrics CSV is missing columns: {sorted(missing_metadata_columns)}")
+
     conn = sqlite3.connect(DB_PATH)
-    city_id = {name: cid for cid, name in conn.execute("SELECT id, name FROM cities")}
+    try:
+        city_ids = {
+            name: city_id
+            for city_id, name in conn.execute("SELECT id, name FROM cities")
+        }
 
-    with open(csv_path, newline="", encoding="utf-8") as f:
-        rows = list(csv.DictReader(f))
+        problems: list[str] = []
+        unknown_cities: set[str] = set()
+        prediction_keys: set[tuple] = set()
+        metadata_targets: set[str] = set()
+        deployed_by_target: dict[str, int] = {}
+        metadata_keys: set[tuple[str, str]] = set()
 
-    # Validate before writing anything, so a bad file can't half-load.
-    problems, unknown_cities = [], set()
-    for i, r in enumerate(rows, start=2):  # row 1 is the header
-        if r["city"] not in city_id:
-            unknown_cities.add(r["city"])
-        if r["target"] not in VALID_TARGETS:
-            problems.append(f"  line {i}: target {r['target']!r} is not one of {sorted(VALID_TARGETS)}")
-        try:
-            float(r["predicted_value"])
-            int(r["year"])
-        except (ValueError, TypeError):
-            problems.append(f"  line {i}: year/predicted_value not numeric -> {r}")
-    for c in sorted(unknown_cities):
-        problems.append(f"  city {c!r} is not in the cities table (check spelling against the CSV)")
+        for line, row in enumerate(predictions, start=2):
+            if row["city"] not in city_ids:
+                unknown_cities.add(row["city"])
+            if row["target"] not in VALID_TARGETS:
+                problems.append(f"line {line}: invalid target {row['target']!r}")
+                continue
+            try:
+                year = int(row["year"])
+                value = float(row["predicted_value"])
+                if not math.isfinite(value) or value < 0:
+                    raise ValueError("predicted_value must be a finite, non-negative number")
+                optional_float(row.get("lower_bound"))
+                optional_float(row.get("upper_bound"))
+            except (TypeError, ValueError) as exc:
+                problems.append(f"line {line}: {exc}")
+                continue
+            key = (row["city"], year, row["target"], row["model_name"])
+            if key in prediction_keys:
+                problems.append(f"line {line}: duplicate prediction key {key}")
+            prediction_keys.add(key)
 
-    if problems:
-        print(f"{len(problems)} problem(s) found - nothing was loaded:")
-        print("\n".join(problems))
-        sys.exit(1)
+        for city in sorted(unknown_cities):
+            problems.append(f"unknown city {city!r}; spelling must match the cities table")
 
-    pairs = {(r["model_name"], r["target"]) for r in rows}
-    for model_name, target in pairs:
-        conn.execute("DELETE FROM predictions WHERE model_name = ? AND target = ?",
-                     (model_name, target))
+        for line, row in enumerate(metadata, start=2):
+            target = row["target"]
+            model_name = row["model_name"]
+            if target not in VALID_TARGETS:
+                problems.append(f"metrics line {line}: invalid target {target!r}")
+                continue
+            metadata_targets.add(target)
+            key = (model_name, target)
+            if key in metadata_keys:
+                problems.append(f"metrics line {line}: duplicate model/target pair {key}")
+            metadata_keys.add(key)
+            try:
+                for metric in ("r2", "rmse", "mae"):
+                    optional_float(row.get(metric))
+                deployed = int(row["is_deployed"])
+                if deployed not in (0, 1):
+                    raise ValueError("is_deployed must be 0 or 1")
+                deployed_by_target[target] = deployed_by_target.get(target, 0) + deployed
+            except (TypeError, ValueError) as exc:
+                problems.append(f"metrics line {line}: {exc}")
 
-    conn.executemany(
-        """INSERT INTO predictions
-           (city_id, year, target, predicted_value, lower_bound, upper_bound, model_name)
-           VALUES (?,?,?,?,?,?,?)""",
-        [(city_id[r["city"]], int(r["year"]), r["target"], float(r["predicted_value"]),
-          optional_float(r.get("lower_bound")), optional_float(r.get("upper_bound")),
-          r["model_name"]) for r in rows])
-    conn.commit()
+        for target in metadata_targets:
+            if deployed_by_target.get(target, 0) != 1:
+                problems.append(
+                    f"target {target!r} must have exactly one deployed model; "
+                    f"found {deployed_by_target.get(target, 0)}"
+                )
 
-    total = conn.execute("SELECT COUNT(*) FROM predictions").fetchone()[0]
-    print(f"Loaded {len(rows)} predictions for {len(pairs)} model/target pair(s). "
-          f"Table now holds {total} rows.")
-    conn.close()
+        deployed_pairs = {
+            (row["model_name"], row["target"])
+            for row in metadata
+            if int(row["is_deployed"]) == 1
+        }
+        prediction_pairs = {(row["model_name"], row["target"]) for row in predictions}
+        if prediction_pairs != deployed_pairs:
+            problems.append(
+                "prediction model/target pairs must exactly match the deployed "
+                f"metadata pairs; predictions={sorted(prediction_pairs)}, "
+                f"deployed={sorted(deployed_pairs)}"
+            )
+
+        if problems:
+            raise ValueError("Validation failed; nothing was loaded:\n- " + "\n- ".join(problems))
+
+        # Replace only the model/target pairs represented by this training run.
+        # This avoids leaving old predictions or duplicate metadata behind.
+        for model_name, target in prediction_pairs:
+            conn.execute(
+                "DELETE FROM predictions WHERE model_name = ? AND target = ?",
+                (model_name, target),
+            )
+        for target in metadata_targets:
+            conn.execute("DELETE FROM model_metadata WHERE target = ?", (target,))
+
+        conn.executemany(
+            """INSERT INTO predictions
+               (city_id, year, target, predicted_value, lower_bound, upper_bound, model_name)
+               VALUES (?, ?, ?, ?, ?, ?, ?)""",
+            [
+                (
+                    city_ids[row["city"]],
+                    int(row["year"]),
+                    row["target"],
+                    float(row["predicted_value"]),
+                    optional_float(row.get("lower_bound")),
+                    optional_float(row.get("upper_bound")),
+                    row["model_name"],
+                )
+                for row in predictions
+            ],
+        )
+
+        conn.executemany(
+            """INSERT INTO model_metadata
+               (model_name, target, r2, rmse, mae, is_deployed)
+               VALUES (?, ?, ?, ?, ?, ?)""",
+            [
+                (
+                    row["model_name"],
+                    row["target"],
+                    optional_float(row.get("r2")),
+                    optional_float(row.get("rmse")),
+                    optional_float(row.get("mae")),
+                    int(row["is_deployed"]),
+                )
+                for row in metadata
+            ],
+        )
+
+        conn.commit()
+        total = conn.execute("SELECT COUNT(*) FROM predictions").fetchone()[0]
+        print(f"Loaded {len(predictions):,} predictions.")
+        print(f"Loaded {len(metadata):,} model-metadata rows.")
+        print(f"Predictions table now contains {total:,} rows.")
+        print("One model per target is marked deployed; API forecast queries can now return results.")
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
+    if len(sys.argv) != 3:
         sys.exit(__doc__)
-    main(sys.argv[1])
+    main(sys.argv[1], sys.argv[2])

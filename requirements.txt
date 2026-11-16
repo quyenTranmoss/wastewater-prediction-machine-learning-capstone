@@ -8,7 +8,6 @@ uvicorn[standard]>=0.32 #local ASGI server for FastAPI
 PyJWT>=2.9              #JWT creation and verification
 python-dotenv>=1.0      #reads JWT_SECRET_KEY from .env (imported by auth.py)
 
-# Machine learning (Quyen) - uncomment as needed
-# scikit-learn>=1.5
-# xgboost>=2.1
-# pandas>=2.2
+scikit-learn>=1.5
+xgboost>=2.1
+pandas>=2.2
