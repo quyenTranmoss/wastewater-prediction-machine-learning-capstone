@@ -1,0 +1,56 @@
+city,year,column,observed_value,suggested_value,factor,previous_year,previous_value,next_year,next_value,evidence,corroborating_columns,confidence,status
+Alma,2020,com_fee_200k_gal,220.0,2200.0,10.0,2019,2200.0,2021.0,2738.0,same decimal shift in multiple fee columns and two-sided history,2,high,AUTO_CORRECTED
+Alma,2020,com_fee_50k_gal,55.0,550.0,10.0,2019,550.0,2021.0,684.5,same decimal shift in multiple fee columns and two-sided history,2,high,AUTO_CORRECTED
+Hitchcock,2019,com_fee_200k_gal,6000.0,600.0,0.1,2017,518.0,2020.0,748.5,same decimal shift in multiple fee columns and two-sided history,2,high,AUTO_CORRECTED
+Hitchcock,2019,com_fee_50k_gal,1500.0,150.0,0.1,2017,143.0,2020.0,201.0,same decimal shift in multiple fee columns and two-sided history,2,high,AUTO_CORRECTED
+Nazareth,2018,res_fee_10k_gal,80.99,8.099,0.1,2017,8.0,2019.0,8.0,same decimal shift in multiple fee columns and two-sided history,2,high,AUTO_CORRECTED
+Nazareth,2018,res_fee_5k_gal,79.99,7.999,0.1,2017,8.0,2019.0,8.0,same decimal shift in multiple fee columns and two-sided history,2,high,AUTO_CORRECTED
+Anahuac,2020,com_fee_50k_gal,8.85,885.0,100.0,2018,594.0,2021.0,719.0,isolated two-sided decimal-shift pattern; manual confirmation required,1,medium,REVIEW_REQUIRED
+Avery,2019,com_fee_50k_gal,198.6,19.86,0.1,2018,24.5,2020.0,24.0,isolated two-sided decimal-shift pattern; manual confirmation required,1,medium,REVIEW_REQUIRED
+Balmorhea,2025,com_fee_50k_gal,302.0,30.200000000000003,0.1,2024,37.0,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Bridge City,2019,com_fee_50k_gal,23.1,231.0,10.0,2018,163.35,2021.0,164.85,isolated two-sided decimal-shift pattern; manual confirmation required,1,medium,REVIEW_REQUIRED
+Bronte,2019,com_fee_200k_gal,33.0,330.0,10.0,2018,330.0,2020.0,330.0,isolated two-sided decimal-shift pattern; manual confirmation required,1,medium,REVIEW_REQUIRED
+Brownsboro,2018,com_fee_200k_gal,718.0,7180.0,10.0,2017,6955.0,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Brownsboro,2018,com_fee_50k_gal,193.0,1930.0,10.0,2017,1705.0,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Corsicana,2019,res_fee_10k_gal,890.07,89.007,0.1,2017,80.0,2020.0,60.0,isolated two-sided decimal-shift pattern; manual confirmation required,1,medium,REVIEW_REQUIRED
+El Campo,2019,res_fee_10k_gal,516.64,51.664,0.1,2018,45.3,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Fair Oaks Ranch,2024,com_fee_50k_gal,335.76,33.576,0.1,2023,47.33,2025.0,46.02,isolated two-sided decimal-shift pattern; manual confirmation required,1,medium,REVIEW_REQUIRED
+Fair Oaks Ranch,2025,com_fee_50k_gal,46.02,460.20000000000005,10.0,2024,335.76,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Goldsmith,2021,com_fee_50k_gal,162.5,16.25,0.1,2020,12.0,2023.0,15.4,isolated two-sided decimal-shift pattern; manual confirmation required,1,medium,REVIEW_REQUIRED
+Goldsmith,2023,com_fee_50k_gal,15.4,154.0,10.0,2021,162.5,2024.0,162.5,isolated two-sided decimal-shift pattern; manual confirmation required,1,medium,REVIEW_REQUIRED
+Goldsmith,2024,com_fee_50k_gal,162.5,16.25,0.1,2023,15.4,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Grand Saline,2018,res_fee_5k_gal,2.91,29.1,10.0,2017,35.56,2019.0,28.0,isolated two-sided decimal-shift pattern; manual confirmation required,1,medium,REVIEW_REQUIRED
+Gunter,2021,com_fee_200k_gal,872.12,87.212,0.1,2020,100.16,2022.0,118.68,isolated two-sided decimal-shift pattern; manual confirmation required,1,medium,REVIEW_REQUIRED
+Gunter,2022,com_fee_200k_gal,118.68,1186.8000000000002,10.0,2021,872.12,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Hamilton,2020,com_fee_50k_gal,26.0,260.0,10.0,2019,186.0,2021.0,186.0,isolated two-sided decimal-shift pattern; manual confirmation required,1,medium,REVIEW_REQUIRED
+Hearne,2018,com_fee_50k_gal,400.0,4000.0,10.0,2017,4000.0,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Hilshire Village,2025,com_fee_50k_gal,44.5,445.0,10.0,2024,300.0,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Ingram,2021,com_fee_50k_gal,40.0,400.0,10.0,2020,293.0,2023.0,422.0,isolated two-sided decimal-shift pattern; manual confirmation required,1,medium,REVIEW_REQUIRED
+Mason,2020,com_fee_50k_gal,450.25,45.025000000000006,0.1,2019,50.0,2021.0,50.0,isolated two-sided decimal-shift pattern; manual confirmation required,1,medium,REVIEW_REQUIRED
+Memphis,2025,com_fee_50k_gal,146.0,14.600000000000001,0.1,2023,21.0,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Mercedes,2020,com_fee_200k_gal,2501.25,250.125,0.1,2018,350.88,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Mercedes,2020,com_fee_50k_gal,833.75,83.375,0.1,2018,116.88,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Oak Ridge North,2021,com_fee_200k_gal,5935.39,593.5390000000001,0.1,2020,820.21,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Oak Ridge North,2021,com_fee_50k_gal,1945.39,194.53900000000002,0.1,2020,221.71,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Rhome,2018,com_fee_50k_gal,3500.0,350.0,0.1,2017,500.0,2020.0,500.0,isolated two-sided decimal-shift pattern; manual confirmation required,1,medium,REVIEW_REQUIRED
+Rhome,2020,com_fee_50k_gal,500.0,5000.0,10.0,2018,3500.0,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Rocksprings,2020,com_fee_200k_gal,117.88,1178.8,10.0,2018,1113.61,2021.0,852.46,isolated two-sided decimal-shift pattern; manual confirmation required,1,medium,REVIEW_REQUIRED
+Ropesville,2020,com_fee_200k_gal,750.0,75.0,0.1,2019,60.0,2021.0,60.0,isolated two-sided decimal-shift pattern; manual confirmation required,1,medium,REVIEW_REQUIRED
+Seminole,2023,com_fee_200k_gal,40.0,400.0,10.0,2021,360.25,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Smiley,2025,com_fee_50k_gal,200.0,20.0,0.1,2023,23.0,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Sweetwater,2023,res_fee_10k_gal,6180.0,61.800000000000004,0.01,2022,58.86,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Tenaha,2023,com_fee_200k_gal,966.0,96.60000000000001,0.1,2021,114.5,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Throckmorton,2018,com_fee_200k_gal,25.0,250.0,10.0,2017,250.0,2019.0,250.0,isolated two-sided decimal-shift pattern; manual confirmation required,1,medium,REVIEW_REQUIRED
+Throckmorton,2019,com_fee_200k_gal,250.0,25.0,0.1,2018,25.0,2020.0,25.0,isolated two-sided decimal-shift pattern; manual confirmation required,1,medium,REVIEW_REQUIRED
+Throckmorton,2020,com_fee_200k_gal,25.0,250.0,10.0,2019,250.0,2021.0,225.5,isolated two-sided decimal-shift pattern; manual confirmation required,1,medium,REVIEW_REQUIRED
+Valley View,2021,com_fee_50k_gal,292.43,29.243000000000002,0.1,2019,30.0,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Wellman,2021,com_fee_200k_gal,1171.98,117.19800000000001,0.1,2019,119.4,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Willow Park,2021,com_fee_200k_gal,71.5,715.0,10.0,2020,970.0,2023.0,1050.0,isolated two-sided decimal-shift pattern; manual confirmation required,1,medium,REVIEW_REQUIRED
+Willow Park,2023,com_fee_200k_gal,1050.0,105.0,0.1,2021,71.5,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Winters,2019,res_fee_10k_gal,160.0,16.0,0.1,2018,16.0,2020.0,16.0,isolated two-sided decimal-shift pattern; manual confirmation required,1,medium,REVIEW_REQUIRED
+Winters,2020,res_fee_10k_gal,16.0,160.0,10.0,2019,160.0,2021.0,160.0,isolated two-sided decimal-shift pattern; manual confirmation required,1,medium,REVIEW_REQUIRED
+Winters,2021,res_fee_10k_gal,160.0,16.0,0.1,2020,16.0,2023.0,16.0,isolated two-sided decimal-shift pattern; manual confirmation required,1,medium,REVIEW_REQUIRED
+Winters,2023,res_fee_10k_gal,16.0,160.0,10.0,2021,160.0,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Woodville,2021,com_fee_200k_gal,48.5,485.0,10.0,2019,666.0,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Yantis,2021,com_fee_200k_gal,50.0,500.0,10.0,2020,425.0,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED
+Yantis,2021,com_fee_50k_gal,50.0,500.0,10.0,2020,425.0,,,latest-year jump has no later observation; manual confirmation required,1,low,REVIEW_REQUIRED

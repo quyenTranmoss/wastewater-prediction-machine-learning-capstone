@@ -1,0 +1,7 @@
+target,scenario,selection_type,selected_model,normalized_combined_score
+res_fee_5k_gal,known_city,best_for_this_scenario,random_forest,1.0825344617040955
+res_fee_5k_gal,unseen_city,best_for_this_scenario,xgboost,1.050126259158985
+res_fee_5k_gal,both_tracks,production_model_for_existing_api,last_value_baseline,
+com_fee_50k_gal,known_city,best_for_this_scenario,random_forest,0.936422036585814
+com_fee_50k_gal,unseen_city,best_for_this_scenario,xgboost,0.9705553698924062
+com_fee_50k_gal,both_tracks,production_model_for_existing_api,random_forest,
