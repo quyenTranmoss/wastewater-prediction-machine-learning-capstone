@@ -1,7 +1,3 @@
-target,scenario,selection_type,selected_model,normalized_combined_score
-res_fee_5k_gal,known_city,best_for_this_scenario,random_forest,1.0825344617040955
-res_fee_5k_gal,unseen_city,best_for_this_scenario,xgboost,1.050126259158985
-res_fee_5k_gal,both_tracks,production_model_for_existing_api,last_value_baseline,
-com_fee_50k_gal,known_city,best_for_this_scenario,random_forest,0.936422036585814
-com_fee_50k_gal,unseen_city,best_for_this_scenario,xgboost,0.9705553698924062
-com_fee_50k_gal,both_tracks,production_model_for_existing_api,random_forest,
+target,selected_model,damping,cv_score_vs_last_value,cv_mae,cv_median_ape_pct,final_test_interval_coverage_80pct
+res_fee_5k_gal,xgboost,0.9,0.9931509153658009,5.583924982816143,9.358028508327617,0.7653333333333333
+com_fee_50k_gal,random_forest,0.9,0.945037827416295,49.73010298557145,11.692513024587434,0.7681159420289855
