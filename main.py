@@ -5,10 +5,13 @@
 
 
 
+import os
+
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware #for cross-origin requests from the frontend to the backend
 
 from auth import router as auth_router, get_current_user
+from database.bootstrap import ensure_database
 #this imports adraian'a query functions from the database.queries 
 #these are the functions the API endpoints call to obtain data.
 from database.queries import (
@@ -17,12 +20,24 @@ from database.queries import (
     population_groups, list_cities, model_performance,
 )
 
+#Builds the SQLite database if this server doesn't have one yet (always the case on Vercel).
+#An existing local database is left untouched. See database/bootstrap.py.
+ensure_database()
+
 app = FastAPI()
+
+#Frontend addresses allowed to call this API. Locally that's the Vite dev server.
+#When hosted, set CORS_ORIGINS to the frontend's address, e.g. https://my-app.vercel.app
+#(comma-separated for several). CORS_ORIGIN_REGEX optionally also allows a pattern,
+#e.g. so preview deployments work: https://my-app-.*\.vercel\.app
+CORS_ORIGINS = [o.strip().rstrip("/") for o in os.environ.get("CORS_ORIGINS", "").split(",") if o.strip()] \
+    or ["http://localhost:5173", "http://127.0.0.1:5173"]
 
 app.add_middleware(
     CORSMiddleware,
     #specifies frontend origins the browser may use to make permitted cross-origin requests to your backend.
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=CORS_ORIGINS,
+    allow_origin_regex=os.environ.get("CORS_ORIGIN_REGEX") or None,
     allow_methods=["*"],
     allow_headers=["*"],
 )

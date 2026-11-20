@@ -7,6 +7,9 @@ The plain password is never written to the database, a file, or a log.
 Create a local test account:
     python database/users.py add <username>          # prompts for the password
     python database/users.py list                    # usernames only
+    python database/users.py hash <username>         # prints {"<username>": "<argon2 hash>"}
+                                                     # to paste into the APP_USERS env var
+                                                     # (hosting: only the hash is ever stored)
 
 The backend imports the two functions it needs:
     from database.users import verify_user, create_user
@@ -19,7 +22,11 @@ import sys
 from argon2 import PasswordHasher
 from argon2.exceptions import InvalidHashError, VerifyMismatchError
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "wastewater.db")
+# Vercel's app folder is read-only, so there the database lives in /tmp.
+# WASTEWATER_DB_PATH overrides both defaults.
+DB_PATH = os.environ.get("WASTEWATER_DB_PATH") or (
+    "/tmp/wastewater.db" if os.environ.get("VERCEL")
+    else os.path.join(os.path.dirname(os.path.abspath(__file__)), "wastewater.db"))
 
 # argon2-cffi's defaults follow the RFC 9106 recommendations. Leave them alone
 # unless there is a measured reason to change them; if they ever do change,
@@ -68,7 +75,7 @@ def verify_user(username: str, password: str) -> bool:
 #change password function, 
 # takes in a username and new password, 
 # hashes the new password and updates the database with the new hash. Raises ValueError if the user does not exist.
-def change_password(userame: str, new_password: str) -> None:
+def change_password(username: str, new_password: str) -> None:
     """Change the password for an existing account."""
     with _connect() as conn:
         result = conn.execute(
@@ -97,6 +104,13 @@ if __name__ == "__main__":
         except sqlite3.IntegrityError:
             sys.exit(f"User {username!r} already exists.")
         print(f"Created {username!r}.")
+    elif cmd == "hash" and len(sys.argv) == 3:
+        import json
+        username = sys.argv[2]
+        password = getpass.getpass(f"Password for {username}: ")
+        if password != getpass.getpass("Confirm: "):
+            sys.exit("Passwords did not match.")
+        print(json.dumps({username: ph.hash(password)}))
     elif cmd == "list":
         users = list_users()
         print("\n".join(users) if users else "No accounts yet.")

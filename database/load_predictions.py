@@ -15,7 +15,11 @@ import sqlite3
 import sys
 from pathlib import Path
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "wastewater.db")
+# Vercel's app folder is read-only, so there the database lives in /tmp.
+# WASTEWATER_DB_PATH overrides both defaults.
+DB_PATH = os.environ.get("WASTEWATER_DB_PATH") or (
+    "/tmp/wastewater.db" if os.environ.get("VERCEL")
+    else os.path.join(os.path.dirname(os.path.abspath(__file__)), "wastewater.db"))
 VALID_TARGETS = {"res_fee_5k_gal", "com_fee_50k_gal"}
 PREDICTION_COLUMNS = {
     "city", "year", "target", "predicted_value",

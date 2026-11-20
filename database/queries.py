@@ -7,7 +7,11 @@ Try it:  python database/queries.py
 import os
 import sqlite3
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "wastewater.db")
+# Vercel's app folder is read-only, so there the database lives in /tmp.
+# WASTEWATER_DB_PATH overrides both defaults.
+DB_PATH = os.environ.get("WASTEWATER_DB_PATH") or (
+    "/tmp/wastewater.db" if os.environ.get("VERCEL")
+    else os.path.join(os.path.dirname(os.path.abspath(__file__)), "wastewater.db"))
 
 
 def connect():

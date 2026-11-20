@@ -19,8 +19,17 @@ import os
 import sqlite3
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-CSV_PATH = os.path.join(HERE, "..", "data_cleaning", "wastewater_costs_2017_2025.csv")
-DB_PATH = os.path.join(HERE, "wastewater.db")
+_RAW_CSV = os.path.join(HERE, "..", "data_cleaning", "wastewater_costs_2017_2025.csv")
+_CHECKED_CSV = os.path.join(HERE, "..", "data_cleaning", "wastewater_costs_2017_2025_checked.csv")
+# Prefer the typo-checked copy written by data_cleaning/detect_fee_typos.py (the same
+# file the ML code trains on); fall back to the raw extract. WASTEWATER_CSV overrides.
+CSV_PATH = os.environ.get("WASTEWATER_CSV") or (
+    _CHECKED_CSV if os.path.exists(_CHECKED_CSV) else _RAW_CSV)
+# Vercel's app folder is read-only, so there the database lives in /tmp.
+# WASTEWATER_DB_PATH overrides both defaults.
+DB_PATH = os.environ.get("WASTEWATER_DB_PATH") or (
+    "/tmp/wastewater.db" if os.environ.get("VERCEL")
+    else os.path.join(HERE, "wastewater.db"))
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS cities (

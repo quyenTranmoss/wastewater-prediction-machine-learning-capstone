@@ -52,6 +52,7 @@ body {
     font-weight: 700; letter-spacing: 1px; cursor: pointer; font-size: 14px;
 }
 .login-btn:hover { background: #0a4a9c; }
+.login-btn:disabled { opacity: 0.7; cursor: wait; }
 .login-foot {
     text-align: center; font-size: 12px; color: #556;
     margin-top: 22px; padding-top: 12px; border-top: 1px solid #e3e8ef;

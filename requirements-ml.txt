@@ -1,0 +1,12 @@
+# Everything needed to run the whole project locally: API + data pipeline + ML.
+#   pip install -r requirements-ml.txt
+# (The deployed API only needs requirements.txt.)
+-r requirements.txt
+
+# Data pipeline (Adriana)
+pdfplumber>=0.11        # parsing the survey PDFs
+
+# Machine learning (Quyen)
+scikit-learn>=1.5
+xgboost>=2.1
+pandas>=2.2

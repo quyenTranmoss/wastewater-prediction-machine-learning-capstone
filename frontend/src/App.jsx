@@ -26,8 +26,10 @@ import {
 //apply index.css style to components
 import "./index.css";
 
-//establishing local host
-const API = "http://127.0.0.1:8000";
+//Address of the backend API. Locally this is the uvicorn server. When hosted, set VITE_API_URL
+//in the frontend's environment variables (Vercel: Project Settings -> Environment Variables)
+//to the deployed API's address, e.g. https://my-api.vercel.app. It is read at build time.
+const API = (import.meta.env.VITE_API_URL || "http://127.0.0.1:8000").replace(/\/+$/, "");
 const COLORS = ["#1769d1", "#43a047", "#f9a825", "#0b2a5b", "#e53935"];
 
 //This defines a helper function for displaying money.
@@ -39,11 +41,15 @@ const TARGETS = {
     com_fee_50k_gal: "Commercial Fee (Per 50,000 Gal)",
 };
 
-//the three ML models sponsors want us to train
+//readable names for the models recorded in model_metadata (anything unlisted shows its raw name)
 const MODEL_NAMES = {
     linear_regression: "Linear Regression",
+    ridge_regression: "Ridge Regression",
     random_forest: "Random Forest",
     xgboost: "XGBoost Regression",
+    hist_gradient_boosting: "Gradient Boosting",
+    last_value_baseline: "No-Change Baseline",
+    drift_baseline: "Average-Growth Baseline",
 };
 
 //This creates an array of years from 2017 through 2040.
@@ -57,6 +63,8 @@ async function get(path, token) {
         //makes sure that the user is logged in
         headers: { Authorization: `Bearer ${token}` },
     });
+    //an expired or invalid login: tell the App so it can send the user back to the login page
+    if (res.status === 401) window.dispatchEvent(new Event("session-expired"));
     if (!res.ok) throw new Error(res.status);
     return res.json();
 }
@@ -517,13 +525,24 @@ function App() {
     const [showPw, setShowPw] = useState(false);
     const [error, setError] = useState("");
     const [page, setPage] = useState("Dashboard");
+    const [loggingIn, setLoggingIn] = useState(false);
+
+    //when any request comes back 401 (login expired), return to the login page with a message
+    useEffect(() => {
+        const onExpired = () => { setToken(null); setError("Your session expired. Please log in again."); };
+        window.addEventListener("session-expired", onExpired);
+        return () => window.removeEventListener("session-expired", onExpired);
+    }, []);
 
     //handles login
-    //fetch sends a POST request to the backend with the username and password. 
+    //fetch sends a POST request to the backend with the username and password.
     // If successful, it stores the access token in state and clears the password field.
     //  If unsuccessful, it sets an error message.
+    //loggingIn disables the button while waiting; a hosted server that has been idle can take a few seconds to wake up.
     async function handleLogin() {
+        if (loggingIn) return;
         setError("");
+        setLoggingIn(true);
         try {
             const res = await fetch(`${API}/login`, {
                 method: "POST", 
@@ -535,14 +554,16 @@ function App() {
             setToken(data.access_token);
             setPassword("");
         } catch {
-            setError("Can't reach the server. Check if uvicorn running.");
+            setError("Can't reach the server. If it was idle, wait a few seconds and try again.");
+        } finally {
+            setLoggingIn(false);
         }
     }
     //if token is not present, display the login page. 
     // Otherwise, display the main application with navigation and content.
     if (!token) {
         return (
-            <div className="login-page" style={{ backgroundImage: "url(/login_background.png)" }}>
+            <div className="login-page" style={{ backgroundImage: "url(/login_background.webp)" }}>
                 <div className="login-box">
                     <div className="login-logo">
                         <Droplets size={56} color="#1769d1" strokeWidth={1.8} />
@@ -573,7 +594,9 @@ function App() {
                     </div>
 
                     {error && <p className="login-error">{error}</p>}
-                    <button className="login-btn" onClick={handleLogin}>LOGIN</button>
+                    <button className="login-btn" onClick={handleLogin} disabled={loggingIn}>
+                        {loggingIn ? "SIGNING IN..." : "LOGIN"}
+                    </button>
                     <div className="login-foot">Wastewater Cost Analysis | 2017 – 2025</div>
                 </div>
             </div>
