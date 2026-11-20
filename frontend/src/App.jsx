@@ -26,10 +26,12 @@ import {
 //apply index.css style to components
 import "./index.css";
 
-//Address of the backend API. Locally this is the uvicorn server. When hosted, set VITE_API_URL
-//in the frontend's environment variables (Vercel: Project Settings -> Environment Variables)
-//to the deployed API's address, e.g. https://my-api.vercel.app. It is read at build time.
-const API = (import.meta.env.VITE_API_URL || "http://127.0.0.1:8000").replace(/\/+$/, "");
+//Address of the backend API.
+// - `npm run dev` (local): the uvicorn server at http://127.0.0.1:8000
+// - hosted build (Vercel Services, see vercel.json): "" so requests go to the same address the
+//   site is served from, and Vercel routes /login and /api/* to the backend service
+// VITE_API_URL overrides both if the API lives at a different address. Read at build time.
+const API = (import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? "http://127.0.0.1:8000" : "")).replace(/\/+$/, "");
 const COLORS = ["#1769d1", "#43a047", "#f9a825", "#0b2a5b", "#e53935"];
 
 //This defines a helper function for displaying money.
