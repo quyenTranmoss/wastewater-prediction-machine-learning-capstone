@@ -18,7 +18,7 @@ import {
 
 //this library has open-sourced icons free to use
 import {
-    Droplets, LayoutDashboard, Database, Home, Building2, TrendingUp, Cpu, Info,
+    Droplets, LayoutDashboard, Database, Home, Building2, TrendingUp, Info,
     LogOut, Bell, Users, UserCheck, Search, Eye, EyeOff, ChevronDown,
     ChevronLeft, ChevronRight, UserCircle, X, Menu,
 } from "lucide-react";
@@ -472,7 +472,8 @@ function CityComparison({ token }) {
     );
 }
 
-/* ---------- ML Model Performance / About ---------- */
+/* ---------- ML Model Performance / About ---------- 
+This displays all the models' performances in a tab on the website. Removed because sponsor didn't want it because end user are not technical
 
 function ModelPerformance({ token }) {
     const [models, setModels] = useState([]);
@@ -497,6 +498,8 @@ function ModelPerformance({ token }) {
     );
 }
 
+*/
+
 function About() {
     return (
         <div className="content-box">
@@ -516,7 +519,6 @@ const NAV = [
     ["Residential Prediction", Home],
     ["Commercial Prediction", Building2],
     ["City Comparison", TrendingUp],
-    ["ML Model Performance", Cpu],
     ["About", Info],
 ];
 
@@ -636,7 +638,6 @@ function App() {
                 {page === "Residential Prediction" && <Prediction token={token} target="res_fee_5k_gal" />}
                 {page === "Commercial Prediction" && <Prediction token={token} target="com_fee_50k_gal" />}
                 {page === "City Comparison" && <CityComparison token={token} />}
-                {page === "ML Model Performance" && <ModelPerformance token={token} />}
                 {page === "About" && <About />}
             </main>
         </div>
