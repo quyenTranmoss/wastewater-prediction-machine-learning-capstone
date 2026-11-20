@@ -20,7 +20,7 @@ import {
 import {
     Droplets, LayoutDashboard, Database, Home, Building2, TrendingUp, Cpu, Info,
     LogOut, Bell, Users, UserCheck, Search, Eye, EyeOff, ChevronDown,
-    ChevronLeft, ChevronRight, UserCircle, X,
+    ChevronLeft, ChevronRight, UserCircle, X, Menu,
 } from "lucide-react";
 
 //apply index.css style to components
@@ -189,7 +189,7 @@ function Dashboard({ token }) {
                 {charts.map(([key, title, color, name]) => (
                     <div className="content-box" key={key}>
                         <h3 className="chart-title">{title}</h3>
-                        <ResponsiveContainer width="100%" height={250}>
+                        <div className="chart-box"><ResponsiveContainer width="100%" height="100%">
                             <LineChart data={rows} margin={{ top: 22, right: 20, left: 0, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e3e8ef" />
                                 <XAxis dataKey="year" tick={axisTick} />
@@ -202,7 +202,7 @@ function Dashboard({ token }) {
                                 />
                                 <Legend verticalAlign="bottom" />
                             </LineChart>
-                        </ResponsiveContainer>
+                        </ResponsiveContainer></div>
                     </div>
                 ))}
             </div>
@@ -279,7 +279,7 @@ function HistoricalData({ token }) {
                 <button className="btn" onClick={downloadCsv}>Download CSV</button>
             </div>
 
-            <table>
+            <div className="table-scroll"><table>
                 <thead>
                     <tr>
                         <th>City</th><th>Year</th><th>Population</th><th>Total Customers</th>
@@ -295,7 +295,7 @@ function HistoricalData({ token }) {
                         </tr>
                     ))}
                 </tbody>
-            </table>
+            </table></div>
 
             <div className="pager">
                 <span>Showing {filtered.length ? pageNo * PER + 1 : 0} to {Math.min((pageNo + 1) * PER, filtered.length)} of {filtered.length} entries</span>
@@ -352,10 +352,10 @@ function Prediction({ token, target }) {
 
             <div className="pred-grid">
                 <div>
-                    <ResponsiveContainer width="100%" height={320}>
+                    <div className="chart-box"><ResponsiveContainer width="100%" height="100%">
                         <LineChart data={series} margin={{ top: 24, right: 16, left: 0, bottom: 0 }}>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e3e8ef" />
-                            <XAxis dataKey="year" type="number" domain={[2017, 2040]} ticks={FULL_YEARS} tick={axisTick} interval={0} />
+                            <XAxis dataKey="year" type="number" domain={[2017, 2040]} ticks={FULL_YEARS} tick={axisTick} interval="preserveStartEnd" minTickGap={6} />
                             <YAxis tick={axisTick} tickFormatter={(v) => `$${v}`} />
                             <Tooltip formatter={(v) => money(v)} />
                             <ReferenceArea x1={2017} x2={splitYear} fillOpacity={0}
@@ -367,7 +367,7 @@ function Prediction({ token, target }) {
                                 strokeDasharray="2 4" dot={{ r: 3, fill: color }} connectNulls />
                             <Legend verticalAlign="bottom" />
                         </LineChart>
-                    </ResponsiveContainer>
+                    </ResponsiveContainer></div>
 
                     <div className="model-strip">
                         <span>Selected Model<b>{MODEL_NAMES[model?.model_name] ?? model?.model_name ?? "—"}</b></span>
@@ -446,10 +446,10 @@ function CityComparison({ token }) {
             </div>
 
             <div className="pred-grid">
-                <ResponsiveContainer width="100%" height={340}>
+                <div className="chart-box"><ResponsiveContainer width="100%" height="100%">
                     <LineChart data={series} margin={{ top: 10, right: 16, left: 0, bottom: 0 }}>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e3e8ef" />
-                        <XAxis dataKey="year" type="number" domain={[2017, 2040]} ticks={FULL_YEARS} tick={axisTick} interval={0} />
+                        <XAxis dataKey="year" type="number" domain={[2017, 2040]} ticks={FULL_YEARS} tick={axisTick} interval="preserveStartEnd" minTickGap={6} />
                         <YAxis tick={axisTick} tickFormatter={(v) => `$${v}`} />
                         <Tooltip formatter={(v) => money(v)} />
                         <Legend verticalAlign="top" />
@@ -458,7 +458,7 @@ function CityComparison({ token }) {
                                 strokeWidth={2} connectNulls dot={false} />
                         ))}
                     </LineChart>
-                </ResponsiveContainer>
+                </ResponsiveContainer></div>
 
                 <div className="summary-card">
                     <h3>Comparison Insights</h3>
@@ -481,7 +481,7 @@ function ModelPerformance({ token }) {
         <div className="content-box">
             <h2 className="card-title">Model Comparison</h2>
             {models.length === 0 && <div className="notice">No models recorded yet. The training script should insert rows into model_metadata.</div>}
-            <table>
+            <div className="table-scroll"><table>
                 <thead><tr><th>Model</th><th>Target</th><th>R²</th><th>MAE</th><th>RMSE</th><th>Deployed</th></tr></thead>
                 <tbody>
                     {models.map((m, i) => (
@@ -492,7 +492,7 @@ function ModelPerformance({ token }) {
                         </tr>
                     ))}
                 </tbody>
-            </table>
+            </table></div>
         </div>
     );
 }
@@ -528,6 +528,7 @@ function App() {
     const [error, setError] = useState("");
     const [page, setPage] = useState("Dashboard");
     const [loggingIn, setLoggingIn] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false); //sidebar drawer on small screens
 
     //when any request comes back 401 (login expired), return to the login page with a message
     useEffect(() => {
@@ -610,6 +611,7 @@ function App() {
     return (
         <div>
             <header className="top-bar">
+                <button className="menu-btn" aria-label="Menu" onClick={() => setMenuOpen(o => !o)}><Menu size={24} /></button>
                 <div className="top-title"><Droplets size={26} color="#4aa3ff" /> Texas Wastewater Cost Prediction System</div>
                 <div className="top-right">
                     <span className="bell"><Bell size={18} /></span>
@@ -617,9 +619,9 @@ function App() {
                 </div>
             </header>
 
-            <aside className="sidebar">
+            <aside className={"sidebar" + (menuOpen ? " open" : "")}>
                 {NAV.map(([name, Icon]) => (
-                    <button key={name} className={page === name ? "active" : ""} onClick={() => setPage(name)}>
+                    <button key={name} className={page === name ? "active" : ""} onClick={() => { setPage(name); setMenuOpen(false); }}>
                         <Icon size={18} /> {name}
                     </button>
                 ))}
